@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart PDF Scanner</title>
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://cloudflare.com"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f9; padding: 20px; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        input { margin: 20px 0; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:disabled { background: #ccc; }
+        #status { margin-top: 20px; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>AI PDF Scanner 📄</h1>
+    <p>Upload image to scan text & make PDF</p>
+    
+    <input type="file" id="imageInput" accept="image/*">
+    <br>
+    <button id="scanBtn">Scan & Download PDF</button>
+    
+    <div id="status">Ready...</div>
+</div>
+
+<script>
+    const { jsPDF } = window.jspdf;
+
+    document.getElementById('scanBtn').addEventListener('click', async () => {
+        const fileInput = document.getElementById('imageInput');
+        const status = document.getElementById('status');
+        const btn = document.getElementById('scanBtn');
+
+        if (fileInput.files.length === 0) {
+            alert("Pehle photo select karein!");
+            return;
+        }
+
+        btn.disabled = true;
+        status.innerText = "AI is scanning text... Please wait.";
+
+        const image = fileInput.files[0];
+
+        // AI OCR Process
+        Tesseract.recognize(image, 'eng', { logger: m => console.log(m) }).then(({ data: { text } }) => {
+            status.innerText = "Text Scanned! Creating PDF...";
+
+            // Create PDF
+            const doc = new jsPDF();
+            const splitText = doc.splitTextToSize(text, 180);
+            doc.text(splitText, 10, 10);
+            doc.save("Scanned_By_AI.pdf");
+
+            status.innerText = "Done! PDF Downloaded.";
+            btn.disabled = false;
+        }).catch(err => {
+            console.error(err);
+            status.innerText = "Error scanning image.";
+            btn.disabled = false;
+        });
+    });
+</script>
+
+</body>
+</html>
