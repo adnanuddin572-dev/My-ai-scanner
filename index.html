@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Smart Scanner</title>
+    <title>Fast AI Scanner</title>
+    <!-- Is se speed barh jati hai -->
     <script src="https://jsdelivr.net"></script>
     <script src="https://cloudflare.com"></script>
     <style>
-        body { font-family: sans-serif; text-align: center; background: #f0f2f5; padding: 20px; }
-        .box { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        button { background: #007bff; color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; margin-top: 10px; cursor: pointer; }
-        #ad-placeholder { background: #eee; height: 100px; line-height: 100px; margin-bottom: 15px; border-radius: 10px; color: #888; }
+        body { font-family: sans-serif; text-align: center; background: #f8f9fa; margin: 0; padding: 20px; }
+        .box { max-width: 400px; margin: auto; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        button { background: #2ecc71; color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:disabled { background: #bdc3c7; }
+        #loader { display: none; margin: 20px 0; color: #3498db; font-weight: bold; }
+        .ad-unit { background: #eee; min-height: 100px; margin: 15px 0; border-radius: 10px; overflow: hidden; }
     </style>
 </head>
 <body>
@@ -19,28 +22,56 @@
     <script async="async" data-cfasync="false" src="https://pl29142532.profitablecpmratenetwork.com/0a66b2e5473afe8b50e8e8102be6f3c2/invoke.js"></script>
 <div id="container-0a66b2e5473afe8b50e8e8102be6f3c2"></div>
 
+    </div>
 
-    <h2>AI PDF Scanner 📄</h2>
-    <input type="file" id="inp" accept="image/*">
-    <button id="btn">Scan & Save PDF</button>
-    <p id="msg"></p>
+    <h2>Fast AI Scanner ⚡</h2>
+    <p style="color: #666; font-size: 14px;">Scan images to PDF instantly</p>
+    
+    <input type="file" id="fileInp" accept="image/*" style="margin: 20px 0;">
+    <button id="scanBtn">Generate PDF</button>
+    
+    <div id="loader">AI is thinking... 🧠</div>
+    <p id="resultMsg" style="margin-top: 15px;"></p>
+
+    <div class="ad-unit">
+        <!-- DOOSRA AD CODE YAHAN PASTE KAREIN -->
+    </div>
 </div>
 
 <script>
     const { jsPDF } = window.jspdf;
-    document.getElementById('btn').onclick = async () => {
-        const file = document.getElementById('inp').files[0];
-        if(!file) return alert("Photo select karein");
-        document.getElementById('msg').innerText = "AI Scanning... Thora sabar karein";
-        
+    const btn = document.getElementById('scanBtn');
+    const loader = document.getElementById('loader');
+    const msg = document.getElementById('resultMsg');
+
+    btn.onclick = async () => {
+        const file = document.getElementById('fileInp').files[0];
+        if(!file) return alert("Please select an image first!");
+
+        btn.disabled = true;
+        loader.style.display = "block";
+        msg.innerText = "";
+
+        // Fast OCR Engine
         Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
             const doc = new jsPDF();
-            doc.text(doc.splitTextToSize(text, 180), 10, 10);
-            doc.save("document.pdf");
-            document.getElementById('msg').innerText = "Done! Download ho gaya.";
+            const lines = doc.splitTextToSize(text, 180);
+            doc.text(lines, 10, 10);
+            doc.save("AI_Scan.pdf");
+            
+            loader.style.display = "none";
+            btn.disabled = false;
+            msg.innerText = "✅ PDF Downloaded Successfully!";
+            msg.style.color = "green";
+        }).catch(e => {
+            loader.style.display = "none";
+            btn.disabled = false;
+            msg.innerText = "❌ Error. Try a clearer photo.";
+            msg.style.color = "red";
         });
     };
 </script>
 
 </body>
 </html>
+
